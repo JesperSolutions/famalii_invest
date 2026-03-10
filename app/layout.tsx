@@ -5,6 +5,7 @@ import {
   SignInButton,
   UserButton,
 } from '@clerk/nextjs'
+import { ui } from '@clerk/ui'
 import { Geist, Geist_Mono } from 'next/font/google'
 import './globals.css'
 
@@ -43,6 +44,7 @@ export default function RootLayout({
   return (
     <ClerkProvider
       appearance={clerkAppearance}
+      ui={ui}
       signInUrl={process.env.NEXT_PUBLIC_FAMALII_CORE_URL + '/sign-in'}
       signUpUrl={process.env.NEXT_PUBLIC_FAMALII_CORE_URL + '/sign-up'}
     >

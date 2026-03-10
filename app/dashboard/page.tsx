@@ -11,7 +11,8 @@ const HOLDINGS = [
 
 export default async function DashboardPage() {
   const { userId } = await auth()
-  if (!userId) redirect('/sign-in')
+  // Middleware handles redirect to Core sign-in; this is a fallback
+  if (!userId) redirect(process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ?? '/')
 
   const totalValue = HOLDINGS.reduce((sum, h) => sum + h.qty * h.price, 0)
   const dayChange  = HOLDINGS.reduce((sum, h) => sum + (h.qty * h.price * h.change / 100), 0)
