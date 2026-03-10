@@ -2,7 +2,9 @@ import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
 
 // ── Placeholder portfolio data ─────────────────────────────────────────────────
-const HOLDINGS = [
+type Holding = { ticker: string; name: string; qty: number; price: number; change: number }
+
+const HOLDINGS: Holding[] = [
   { ticker: 'AAPL',  name: 'Apple Inc.',          qty: 10,  price: 189.45, change: +1.23 },
   { ticker: 'MSFT',  name: 'Microsoft Corp.',      qty: 5,   price: 415.20, change: +0.87 },
   { ticker: 'BTC',   name: 'Bitcoin',              qty: 0.25,price: 68240,  change: -2.15 },
