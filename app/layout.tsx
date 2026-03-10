@@ -49,7 +49,7 @@ export default function RootLayout({
       signUpUrl={process.env.NEXT_PUBLIC_FAMALII_CORE_URL + '/sign-up'}
     >
       <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
-        <body className="antialiased min-h-screen bg-f-bg text-f-text">
+        <body className="antialiased min-h-screen bg-f-bg text-f-text flex flex-col">
 
           {/* ── Navigation ───────────────────────────── */}
           <header className="sticky top-0 z-50 border-b border-f-border bg-f-bg/80 backdrop-blur-xl">
@@ -103,7 +103,7 @@ export default function RootLayout({
             </div>
           </header>
 
-          <main>{children}</main>
+          <main className="flex-1">{children}</main>
 
           <footer className="border-t border-f-border mt-24 py-8 px-6">
             <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-f-faint">
