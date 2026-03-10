@@ -22,6 +22,19 @@ export default async function DashboardPage() {
 
       {/* Page header */}
       <div className="mb-10">
+        <div className="flex items-center gap-2 mb-4">
+          <a
+            href={process.env.NEXT_PUBLIC_FAMALII_CORE_URL ?? 'https://famalii-core.vercel.app'}
+            className="inline-flex items-center gap-1.5 text-xs text-f-faint hover:text-f-muted transition-colors"
+          >
+            <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden>
+              <path d="M10 12L6 8l4-4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+            Famalii Core
+          </a>
+          <span className="text-f-border text-xs">/</span>
+          <span className="text-xs text-f-muted">Invest</span>
+        </div>
         <p className="text-xs uppercase tracking-widest text-invest font-semibold mb-2">
           Portfolio overview
         </p>
