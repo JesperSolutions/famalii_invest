@@ -45,6 +45,11 @@ export default function RootLayout({
     <ClerkProvider
       appearance={clerkAppearance}
       ui={ui}
+      // Satellite domain config: tells Clerk this app is a child of famalii-core.
+      // Clerk will do a __clerk_handshake token exchange when the user first arrives
+      // from the primary domain so they don't have to sign in again.
+      isSatellite
+      domain={process.env.NEXT_PUBLIC_CLERK_DOMAIN}
       signInUrl={process.env.NEXT_PUBLIC_FAMALII_CORE_URL + '/sign-in'}
       signUpUrl={process.env.NEXT_PUBLIC_FAMALII_CORE_URL + '/sign-up'}
     >
