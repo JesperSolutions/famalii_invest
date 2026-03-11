@@ -1,23 +1,33 @@
 import { auth } from '@clerk/nextjs/server'
 import { redirect } from 'next/navigation'
+import { fetchQuotes } from '@/lib/prices'
 
-// ── Placeholder portfolio data ─────────────────────────────────────────────────
-type Holding = { ticker: string; name: string; qty: number; price: number; change: number }
+// User's positions — qty is user-specific, prices fetched live
+type Position = { ticker: string; name: string; qty: number }
 
-const HOLDINGS: Holding[] = [
-  { ticker: 'AAPL',  name: 'Apple Inc.',          qty: 10,  price: 189.45, change: +1.23 },
-  { ticker: 'MSFT',  name: 'Microsoft Corp.',      qty: 5,   price: 415.20, change: +0.87 },
-  { ticker: 'BTC',   name: 'Bitcoin',              qty: 0.25,price: 68240,  change: -2.15 },
-  { ticker: 'VOO',   name: 'Vanguard S&P 500 ETF', qty: 8,   price: 510.30, change: +0.54 },
+const POSITIONS: Position[] = [
+  { ticker: 'AAPL', name: 'Apple Inc.',          qty: 10   },
+  { ticker: 'MSFT', name: 'Microsoft Corp.',      qty: 5    },
+  { ticker: 'BTC',  name: 'Bitcoin',              qty: 0.25 },
+  { ticker: 'VOO',  name: 'Vanguard S&P 500 ETF', qty: 8    },
 ]
 
 export default async function DashboardPage() {
   const { userId } = await auth()
-  // Middleware handles redirect to Core sign-in; this is a fallback
   if (!userId) redirect(process.env.NEXT_PUBLIC_CLERK_SIGN_IN_URL ?? '/')
 
-  const totalValue = HOLDINGS.reduce((sum, h) => sum + h.qty * h.price, 0)
-  const dayChange  = HOLDINGS.reduce((sum, h) => sum + (h.qty * h.price * h.change / 100), 0)
+  // Fetch live prices; falls back to static values on any error
+  const quotes = await fetchQuotes(POSITIONS.map(p => p.ticker))
+  const holdings = POSITIONS.map(p => ({
+    ...p,
+    price:         quotes.get(p.ticker)?.price         ?? 0,
+    changePercent: quotes.get(p.ticker)?.changePercent ?? 0,
+    stale:         quotes.get(p.ticker)?.stale         ?? true,
+  }))
+
+  const anyStale   = holdings.some(h => h.stale)
+  const totalValue = holdings.reduce((sum, h) => sum + h.qty * h.price, 0)
+  const dayChange  = holdings.reduce((sum, h) => sum + (h.qty * h.price * h.changePercent / 100), 0)
 
   return (
     <div className="max-w-6xl mx-auto px-6 py-12">
@@ -51,7 +61,7 @@ export default async function DashboardPage() {
         {[
           { label: 'Total value',   value: `$${totalValue.toLocaleString('en-US', { minimumFractionDigits: 2 })}`,  accent: true },
           { label: "Today's P&L",   value: `${dayChange >= 0 ? '+' : ''}$${Math.abs(dayChange).toFixed(2)}`, positive: dayChange >= 0 },
-          { label: 'Positions',     value: HOLDINGS.length },
+          { label: 'Positions',     value: holdings.length },
           { label: 'Account',       value: 'Active', isText: true },
         ].map(({ label, value, accent, positive, isText }) => (
           <div
@@ -87,7 +97,7 @@ export default async function DashboardPage() {
             </tr>
           </thead>
           <tbody>
-            {HOLDINGS.map((h, i) => (
+            {holdings.map((h, i) => (
               <tr
                 key={h.ticker}
                 className={`border-b border-f-border last:border-0 hover:bg-f-raised transition-colors ${i % 2 === 0 ? 'bg-f-bg' : 'bg-f-surface'}`}
@@ -110,8 +120,8 @@ export default async function DashboardPage() {
                 <td className="px-5 py-4 text-right text-f-text font-semibold">
                   ${(h.qty * h.price).toLocaleString('en-US', { minimumFractionDigits: 2 })}
                 </td>
-                <td className={`px-5 py-4 text-right font-semibold ${h.change >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
-                  {h.change >= 0 ? '+' : ''}{h.change}%
+                <td className={`px-5 py-4 text-right font-semibold ${h.changePercent >= 0 ? 'text-emerald-400' : 'text-red-400'}`}>
+                  {h.changePercent >= 0 ? '+' : ''}{h.changePercent.toFixed(2)}%
                 </td>
               </tr>
             ))}
@@ -119,8 +129,11 @@ export default async function DashboardPage() {
         </table>
       </div>
 
-      <p className="mt-4 text-xs text-f-faint text-center">
-        * Sample data — real data integration coming soon.
+      <p className="mt-4 text-xs text-center">
+        {anyStale
+          ? <span className="text-f-faint">⚠ Prices unavailable — showing estimates</span>
+          : <span className="text-emerald-500/70">● Live prices · refreshes every 60 s</span>
+        }
       </p>
     </div>
   )
