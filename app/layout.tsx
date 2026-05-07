@@ -6,10 +6,14 @@ import {
   UserButton,
 } from '@clerk/nextjs'
 import { ui } from '@clerk/ui'
-import { Geist, Geist_Mono } from 'next/font/google'
+import { DM_Sans, Geist_Mono } from 'next/font/google'
 import './globals.css'
 
-const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
+const dmSans = DM_Sans({
+  variable: '--font-dm-sans',
+  subsets: ['latin'],
+  weight: ['400', '500', '600', '700', '800', '900'],
+})
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
 
 export const metadata: Metadata = {
@@ -19,22 +23,22 @@ export const metadata: Metadata = {
 
 const clerkAppearance = {
   variables: {
-    colorBackground:      '#131318',
-    colorInputBackground: '#1a1a22',
+    colorBackground:      '#11141f',
+    colorInputBackground: '#181b29',
     colorInputText:       '#eeeef2',
     colorText:            '#eeeef2',
-    colorTextSecondary:   '#8888a2',
-    colorPrimary:         '#f97316',
+    colorTextSecondary:   '#8a93ab',
+    colorPrimary:         '#9EEAAF',
     colorDanger:          '#ef4444',
     borderRadius:         '0.75rem',
-    fontFamily:           'var(--font-geist-sans), system-ui, sans-serif',
+    fontFamily:           'var(--font-dm-sans), "DM Sans", system-ui, sans-serif',
   },
   elements: {
     card:                     'shadow-2xl',
-    footerActionLink:         'text-[#f97316] hover:text-[#fb923c]',
-    formButtonPrimary:        'bg-[#f97316] hover:bg-[#ea580c] transition-colors',
-    formFieldInput:           'border-[#363645] focus:border-[#f97316] transition-colors',
-    socialButtonsBlockButton: 'border-[#363645] bg-[#1a1a22] text-[#eeeef2]',
+    footerActionLink:         'text-[#9EEAAF] hover:text-[#c5f3d0]',
+    formButtonPrimary:        'bg-[#9EEAAF] hover:bg-[#7cd896] text-[#192E5B] font-semibold transition-colors',
+    formFieldInput:           'border-[#363c52] focus:border-[#9EEAAF] transition-colors',
+    socialButtonsBlockButton: 'border-[#363c52] bg-[#181b29] text-[#eeeef2]',
   },
 }
 
@@ -53,7 +57,7 @@ export default function RootLayout({
       signInUrl={process.env.NEXT_PUBLIC_FAMALII_CORE_URL + '/sign-in'}
       signUpUrl={process.env.NEXT_PUBLIC_FAMALII_CORE_URL + '/sign-up'}
     >
-      <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`}>
+      <html lang="en" className={`${dmSans.variable} ${geistMono.variable}`}>
         <body className="antialiased min-h-screen bg-f-bg text-f-text flex flex-col">
 
           {/* ── Navigation ───────────────────────────── */}
@@ -67,8 +71,12 @@ export default function RootLayout({
                   className="flex items-center gap-2 opacity-60 hover:opacity-100 transition-opacity"
                   title="Back to Famalii Core"
                 >
-                  <div className="w-6 h-6 rounded-md bg-f-orange flex items-center justify-center">
-                    <span className="text-white font-black text-[10px]">F</span>
+                  <div className="w-6 h-6 rounded-md bg-f-blue flex items-center justify-center ring-1 ring-f-border">
+                    <span className="flex gap-[1.5px] items-end">
+                      <span className="w-[2px] h-[10px] rounded-full bg-white" />
+                      <span className="w-[2px] h-[8px] rounded-full bg-white relative"><span className="absolute -top-[3px] left-1/2 -translate-x-1/2 w-[3px] h-[3px] rounded-full bg-f-orange" /></span>
+                      <span className="w-[2px] h-[6px] rounded-full bg-white relative"><span className="absolute -top-[3px] left-1/2 -translate-x-1/2 w-[3px] h-[3px] rounded-full bg-f-orange" /></span>
+                    </span>
                   </div>
                   <span className="text-xs text-f-muted font-semibold tracking-tight">Famalii</span>
                 </a>
@@ -94,12 +102,12 @@ export default function RootLayout({
                     Watchlist
                   </a>
                   <div className="ml-2">
-                    <UserButton appearance={{ variables: { colorPrimary: '#f97316' } }} />
+                    <UserButton appearance={{ variables: { colorPrimary: '#9EEAAF' } }} />
                   </div>
                 </Show>
                 <Show when="signed-out">
                   <SignInButton>
-                    <button className="text-sm text-white bg-f-orange hover:bg-f-orange-dark transition-colors px-4 py-2 rounded-lg font-semibold">
+                    <button className="text-sm text-f-blue bg-f-orange hover:bg-f-orange-dark transition-colors px-4 py-2 rounded-lg font-bold">
                       Sign in
                     </button>
                   </SignInButton>
